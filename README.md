@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 M13 Design Studio – Premium Art & Decor Platform
 
-## Getting Started
+M13 Design Studio is a modern, high-end E-commerce platform dedicated to handcrafted wall art, personalized masterpieces, and premium home decor. Built with **Next.js 15**, **Tailwind CSS v4**, and **Zustand**, it offers a seamless shopping experience for art lovers and a robust management suite for administrators.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🌟 Key Features
+
+### 🛒 Storefront
+- **Dynamic Product Discovery**: Browse art by category (Wall Art, Religious, Personalized, etc.) with advanced filtering by price range and sorting options.
+- **Rich Product Details**: Interactive product pages featuring image zooming, variant selection (size/price), and custom personalization fields.
+- **Persistent Cart & Wishlist**: Seamlessly manage items with a persistent side drawer cart and a dedicated wishlist, powered by Zustand.
+- **Smart Checkout Flow**: A beautiful, multi-step checkout process with real-time summary updates and order placement simulation.
+- **Fully Responsive**: A premium mobile-first design that looks stunning on desktops, tablets, and smartphones.
+
+### 🛡️ Admin Dashboard
+- **Real-time Analytics**: Interactive charts (Area, Bar, Pie) for tracking revenue trends, order volume, and category distribution.
+- **Inventory Management**: Full control over the product catalog, including the ability to add, edit, or delete items.
+- **Order Tracking**: Detailed order management system with status updates (Processing, Shipped, Delivered) and customer communication logs.
+- **Content & Marketing**: Manage homepage banners, customer testimonials, and promotional coupon codes.
+
+---
+
+## 🚀 Tech Stack
+
+- **Framework**: [Next.js 15 (App Router)](https://nextjs.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Charts**: [Recharts](https://recharts.org/)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand) (with Persistence)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Notifications**: [React Hot Toast](https://react-hot-toast.com/)
+- **Fonts**: Inter & Poppins (via Next Font)
+
+---
+
+## 📁 Project Structure
+
+```text
+src/
+├── app/               # Next.js App Router (Pages & Layouts)
+│   ├── admin/         # Management Dashboard
+│   ├── shop/          # Product Listing & Filtering
+│   ├── product/       # Dynamic Product Details
+│   └── checkout/      # Multi-step Checkout Flow
+├── components/        # Reusable UI Components
+├── lib/               # Utilities, Store (Zustand), and Mock Data
+└── styles/            # Global Styles (Tailwind v4 Layering)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites
+- Node.js 18.x or later
+- npm / yarn / pnpm
 
-## Learn More
+### Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/vivek-xy/M13designStudio.git
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+4. **Build for production**:
+   ```bash
+   npm run build
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📸 Preview
+
+*Note: Add your screenshots here to showcase the stunning UI.*
+
+---
+
+## 🗺️ Roadmap
+- [ ] Backend integration with Supabase/PostgreSQL.
+- [ ] Real-time payment gateway integration (Stripe/Razorpay).
+- [ ] User authentication with Clerk or NextAuth.
+- [ ] AI-powered "View in my Room" AR feature.
+
+---
+
+## 📄 License
+This project is licensed under the MIT License.
+
+---
+
+**Crafted with ❤️ by M13 Design Studio Team.**
