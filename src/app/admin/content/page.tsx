@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { Plus, Image, FileText, Star, Trash2, Edit2, Upload } from 'lucide-react';
+import NextImage from 'next/image';
+import { Plus, Image as ImageIcon, FileText, Star, Trash2, Edit2, Upload } from 'lucide-react';
 import { TESTIMONIALS } from '@/lib/data';
 import toast from 'react-hot-toast';
 
@@ -44,8 +45,8 @@ export default function AdminContentPage() {
           <button className="btn-primary gap-2"><Upload size={16} /> Upload New Banner</button>
           {banners.map(b => (
             <div key={b.id} className={`bg-white rounded-2xl border-2 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-all ${b.active ? 'border-[#E5EBF4]' : 'border-dashed border-[#E5EBF4] opacity-60'}`}>
-              <div className="w-full sm:w-40 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-                <img src={b.img} alt={b.title} className="w-full h-full object-cover" />
+              <div className="relative w-full sm:w-40 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                <NextImage src={b.img} alt={b.title} fill className="object-cover" />
               </div>
               <div className="flex-1">
                 <p className="font-bold">{b.title}</p>
@@ -69,7 +70,9 @@ export default function AdminContentPage() {
           <button className="btn-primary gap-2"><Plus size={16} /> Add Testimonial</button>
           {testimonials.map(t => (
             <div key={t.id} className="bg-white rounded-2xl border border-[#E5EBF4] p-5 flex flex-col sm:flex-row items-start gap-4">
-              <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover shrink-0" />
+              <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                <NextImage src={t.avatar} alt={t.name} fill className="object-cover" />
+              </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <p className="font-bold text-sm">{t.name}</p>

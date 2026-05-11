@@ -1,6 +1,7 @@
 'use client';
 import { BLOG_POSTS } from '@/lib/data';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
 export default function BlogPage() {
@@ -15,8 +16,8 @@ export default function BlogPage() {
         {/* Featured */}
         <div className="mb-16">
           <Link href={`/blog/1`} className="group grid md:grid-cols-2 gap-0 bg-white rounded-3xl overflow-hidden border border-[#E5EBF4] card-hover">
-            <div className="aspect-video md:aspect-auto overflow-hidden">
-              <img src={BLOG_POSTS[0].image} alt={BLOG_POSTS[0].title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div className="relative aspect-video md:aspect-auto overflow-hidden">
+              <Image src={BLOG_POSTS[0].image} alt={BLOG_POSTS[0].title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
             </div>
             <div className="p-8 flex flex-col justify-center">
               <span className="badge badge-blue mb-3">{BLOG_POSTS[0].category}</span>
@@ -33,8 +34,8 @@ export default function BlogPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {BLOG_POSTS.map(post => (
             <Link key={post.id} href={`/blog/${post.id}`} className="card-hover bg-white rounded-2xl overflow-hidden border border-[#E5EBF4] group">
-              <div className="aspect-video overflow-hidden">
-                <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="relative aspect-video overflow-hidden">
+                <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3">

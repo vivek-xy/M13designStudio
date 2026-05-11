@@ -5,6 +5,7 @@ import { useStore } from '@/lib/store';
 import { PRODUCTS } from '@/lib/data';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const MOCK_ORDERS = [
   { id: 'AB240301', date: '2024-03-01', status: 'Delivered', total: 2499, items: [PRODUCTS[0]] },
@@ -43,7 +44,7 @@ export default function AccountPage() {
             <User size={28} className="text-white" />
           </div>
           <h1 className="text-2xl font-black">Welcome Back</h1>
-          <p className="text-[#5A6472] mt-1">Sign in to your ArtisanBlue account</p>
+          <p className="text-[#5A6472] mt-1">Sign in to your M13 Design Studio account</p>
         </div>
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <div><label className="block text-sm font-medium mb-1.5">Email</label>
@@ -55,10 +56,10 @@ export default function AccountPage() {
           <div className="flex justify-end"><a href="#" className="text-sm text-[#0A66FF] hover:underline">Forgot password?</a></div>
           <button type="submit" className="btn-primary justify-center py-3.5">Sign In</button>
         </form>
-        <p className="text-center text-sm text-[#5A6472] mt-5">Don't have an account? <a href="#" onClick={() => setUser({ id: '1', name: 'New User', email: 'new@email.com', role: 'user' })} className="text-[#0A66FF] font-medium hover:underline">Create account</a></p>
+        <p className="text-center text-sm text-[#5A6472] mt-5">Don&apos;t have an account? <a href="#" onClick={() => setUser({ id: '1', name: 'New User', email: 'new@email.com', role: 'user' })} className="text-[#0A66FF] font-medium hover:underline">Create account</a></p>
         <div className="mt-4 pt-4 border-t border-[#E5EBF4] flex flex-col gap-2">
           <button className="btn-ghost w-full justify-center gap-3 py-3">
-            <img src="https://img.icons8.com/color/20/google-logo.png" alt="Google" /> Continue with Google
+            <Image src="https://img.icons8.com/color/20/google-logo.png" alt="Google" width={20} height={20} /> Continue with Google
           </button>
         </div>
       </div>
@@ -141,7 +142,9 @@ export default function AccountPage() {
                   <div className="flex gap-3">
                     {order.items.map(item => (
                       <div key={item.id} className="flex items-center gap-2">
-                        <img src={item.images[0]} alt={item.name} className="w-12 h-12 rounded-lg object-cover" />
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0">
+                          <Image src={item.images[0]} alt={item.name} fill className="object-cover" />
+                        </div>
                         <div>
                           <p className="text-sm font-medium leading-tight">{item.name}</p>
                           <div className="flex gap-1 mt-0.5">{[...Array(5)].map((_, i) => <Star key={i} size={10} fill={i < item.rating ? '#F59E0B' : 'none'} stroke={i < item.rating ? '#F59E0B' : '#D1D5DB'} />)}</div>
@@ -186,3 +189,4 @@ export default function AccountPage() {
     </div>
   );
 }
+

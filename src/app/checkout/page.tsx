@@ -1,8 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '@/lib/store';
 import { CheckCircle, CreditCard, MapPin, Package, ChevronRight, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+import Image from 'next/image';
+
+import { api } from '@/lib/api';
 
 const STEPS = ['Address', 'Payment', 'Confirm'];
 
@@ -12,18 +16,39 @@ export default function CheckoutPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', city: '', state: '', pincode: '' });
   const [payment, setPayment] = useState('card');
   const [ordered, setOrdered] = useState(false);
+  const [orderId, setOrderId] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const shipping = cartTotal() >= 1999 ? 0 : 99;
   const total = cartTotal() + shipping;
 
   const update = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
-  const handleOrder = () => {
-    setTimeout(() => {
-      setOrdered(true);
-      clearCart();
-    }, 1500);
-    toast.loading('Processing your order...', { duration: 1500 });
+  const handleOrder = async () => {
+    setIsProcessing(true);
+    const loadingToast = toast.loading('Processing your order...');
+    
+    try {
+      const response = await api.orders.create({
+        items: cart,
+        total,
+        customer: form,
+        paymentMethod: payment
+      });
+
+      if (response.success) {
+        setOrderId(response.orderId);
+        setOrdered(true);
+        clearCart();
+        toast.success('Order placed successfully!', { id: loadingToast });
+      } else {
+        throw new Error('Order failed');
+      }
+    } catch (error) {
+      toast.error('Failed to place order. Please try again.', { id: loadingToast });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (ordered) return (
@@ -33,12 +58,12 @@ export default function CheckoutPage() {
       </div>
       <h1 className="text-3xl font-black text-[#0D1117] mb-3">Order Placed! 🎉</h1>
       <p className="text-[#5A6472] mb-2">Thank you, {form.name || 'Customer'}!</p>
-      <p className="text-[#5A6472] mb-8">Your order <strong className="text-[#0D1117]">#AB{Date.now().toString().slice(-6)}</strong> has been confirmed. You'll receive a confirmation on <strong>{form.email || 'your email'}</strong>.</p>
+      <p className="text-[#5A6472] mb-8">Your order <strong className="text-[#0D1117]">#{orderId}</strong> has been confirmed. You&apos;ll receive a confirmation on <strong>{form.email || 'your email'}</strong>.</p>
       <div className="bg-[#F8FAFD] rounded-2xl p-6 border border-[#E5EBF4] mb-8 text-left space-y-2">
-        <p className="text-sm text-[#5A6472]">Estimated delivery: <strong className="text-[#0D1117]">5–7 business days</strong></p>
+        <p className="text-sm text-[#5A6472]">Estimated delivery: <strong className="text-[#0D1117]">5&ndash;7 business days</strong></p>
         <p className="text-sm text-[#5A6472]">Shipping to: <strong className="text-[#0D1117]">{form.city || 'Your city'}</strong></p>
       </div>
-      <a href="/" className="btn-primary">Back to Home</a>
+      <Link href="/" className="btn-primary">Back to Home</Link>
     </div>
   );
 
@@ -136,7 +161,9 @@ export default function CheckoutPage() {
               <div className="flex flex-col gap-3 mb-6">
                 {cart.map(item => (
                   <div key={item.id} className="flex items-center gap-3">
-                    <img src={item.images[0]} alt={item.name} className="w-14 h-14 rounded-xl object-cover" />
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0">
+                      <Image src={item.images[0]} alt={item.name} fill className="object-cover" />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate">{item.name}</p>
                       <p className="text-xs text-[#5A6472]">Qty: {item.quantity} {item.selectedSize ? `· ${item.selectedSize}` : ''}</p>
@@ -146,9 +173,23 @@ export default function CheckoutPage() {
                 ))}
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setStep(1)} className="btn-ghost">← Back</button>
-                <button onClick={handleOrder} className="btn-primary flex-1 justify-center py-4 text-base">
-                  <Lock size={16} /> Place Order – ₹{total.toLocaleString()}
+                <button onClick={() => setStep(1)} className="btn-ghost" disabled={isProcessing}>← Back</button>
+                <button 
+                  onClick={handleOrder} 
+                  disabled={isProcessing}
+                  className="btn-primary flex-1 justify-center py-4 text-base disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isProcessing ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2"><Lock size={16} /> Place Order – ₹{total.toLocaleString()}</span>
+                  )}
                 </button>
               </div>
               <p className="text-xs text-[#8B9BAD] mt-3 text-center flex items-center justify-center gap-1">
@@ -165,7 +206,9 @@ export default function CheckoutPage() {
             <div className="flex flex-col gap-3 max-h-48 overflow-y-auto mb-4">
               {cart.map(item => (
                 <div key={item.id} className="flex items-center gap-2 text-sm">
-                  <img src={item.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                  <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0">
+                    <Image src={item.images[0]} alt="" fill className="object-cover" />
+                  </div>
                   <span className="flex-1 truncate text-[#5A6472]">{item.name}</span>
                   <span className="font-semibold shrink-0">₹{(item.price * item.quantity).toLocaleString()}</span>
                 </div>
@@ -184,3 +227,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

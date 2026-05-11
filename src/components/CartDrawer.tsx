@@ -2,13 +2,17 @@
 import { useState, useEffect } from 'react';
 import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useStore } from '@/lib/store';
 
 export default function CartDrawer() {
   const { cart, isCartOpen, setCartOpen, updateQty, removeFromCart, cartTotal } = useStore();
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!mounted || !isCartOpen) return null;
 
@@ -44,26 +48,36 @@ export default function CartDrawer() {
             <div className="flex flex-col gap-4">
               {cart.map((item) => (
                 <div key={`${item.id}-${item.selectedSize}`} className="flex gap-4 p-4 bg-[#F8FAFD] rounded-2xl">
-                  <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-                    <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
+                  <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                    <Image src={item.images[0]} alt={item.name} fill className="object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-sm leading-tight mb-1 line-clamp-2">{item.name}</h4>
-                    {item.selectedSize && <p className="text-xs text-[#5A6472] mb-2">{item.selectedSize}</p>}
-                    {item.customization && <p className="text-xs text-[#0A66FF] mb-2 truncate">✏️ {item.customization}</p>}
+                    {item.selectedSize && <p className="text-xs text-[#5A6472] mb-1">{item.selectedSize}</p>}
+                    {item.customization && <p className="text-xs text-[#0A66FF] mb-1 truncate">✏️ {item.customization}</p>}
+                    {item.customImages && item.customImages.length > 0 && (
+                      <div className="flex items-center gap-2 mt-1 mb-2 overflow-x-auto pb-1">
+                        {item.customImages.map((img, idx) => (
+                          <div key={idx} className="relative w-8 h-8 rounded-lg overflow-hidden border border-[#0A66FF]/20 shrink-0">
+                            <Image src={img} fill className="object-cover" alt={`Custom upload ${idx + 1}`} />
+                          </div>
+                        ))}
+                        <span className="text-[9px] font-bold text-[#0A66FF] uppercase whitespace-nowrap ml-1">{item.customImages.length} Photos</span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center border border-[#E5EBF4] rounded-lg overflow-hidden">
-                        <button onClick={() => updateQty(item.id, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-[#EEF4FF] transition-all text-[#5A6472]">
+                        <button onClick={() => updateQty(item.id, item.quantity - 1, item.selectedSize)} className="w-8 h-8 flex items-center justify-center hover:bg-[#EEF4FF] transition-all text-[#5A6472]" aria-label="Decrease quantity">
                           <Minus size={12} />
                         </button>
                         <span className="w-8 h-8 flex items-center justify-center text-sm font-semibold">{item.quantity}</span>
-                        <button onClick={() => updateQty(item.id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-[#EEF4FF] transition-all text-[#5A6472]">
+                        <button onClick={() => updateQty(item.id, item.quantity + 1, item.selectedSize)} className="w-8 h-8 flex items-center justify-center hover:bg-[#EEF4FF] transition-all text-[#5A6472]" aria-label="Increase quantity">
                           <Plus size={12} />
                         </button>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-[#0A66FF]">₹{(item.price * item.quantity).toLocaleString()}</span>
-                        <button onClick={() => removeFromCart(item.id)} className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center text-red-400 hover:bg-red-100 transition-all">
+                        <button onClick={() => removeFromCart(item.id, item.selectedSize)} className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center text-red-400 hover:bg-red-100 transition-all" aria-label="Remove item">
                           <Trash2 size={12} />
                         </button>
                       </div>

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Trash2, Plus, Minus, Tag, ArrowRight, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useStore } from '@/lib/store';
 import { COUPONS } from '@/lib/data';
 import toast from 'react-hot-toast';
@@ -53,12 +54,27 @@ export default function CartPage() {
               <div key={`${item.id}-${item.selectedSize}`}
                 className={`flex flex-col md:grid md:grid-cols-[1fr_auto_auto_auto] gap-4 items-start md:items-center px-6 py-5 ${idx < cart.length - 1 ? 'border-b border-[#E5EBF4]' : ''}`}>
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-                    <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
+                  <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                    <Image src={item.images[0]} alt={item.name} fill className="object-cover" />
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-semibold text-sm leading-snug">{item.name}</h3>
                     {item.customization && <p className="text-xs text-[#0A66FF] mt-0.5 truncate">✏️ {item.customization}</p>}
+                    {item.customImages && item.customImages.length > 0 && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex -space-x-2">
+                          {item.customImages.slice(0, 3).map((img, i) => (
+                            <div key={i} className="relative w-8 h-8 rounded-lg overflow-hidden border-2 border-white bg-slate-100 shadow-sm">
+                              <Image src={img} fill className="object-cover" alt="" />
+                            </div>
+                          ))}
+                        </div>
+                        {item.customImages.length > 3 && (
+                          <span className="text-[10px] font-bold text-[#8B9BAD]">+{item.customImages.length - 3}</span>
+                        )}
+                        <span className="text-[10px] font-bold text-[#0A66FF] uppercase tracking-wider ml-1">{item.customImages.length} Photos</span>
+                      </div>
+                    )}
                     <p className="text-[#0A66FF] font-bold text-sm mt-1">₹{item.price.toLocaleString()}</p>
                   </div>
                 </div>
@@ -147,8 +163,12 @@ export default function CartPage() {
               Proceed to Checkout <ArrowRight size={18} />
             </Link>
             <div className="flex items-center justify-center gap-4 mt-4">
-              <img src="https://img.icons8.com/color/24/visa.png" alt="Visa" className="h-5 opacity-60" />
-              <img src="https://img.icons8.com/color/24/mastercard.png" alt="Mastercard" className="h-5 opacity-60" />
+            <div className="relative h-5 w-8">
+              <Image src="https://img.icons8.com/color/24/visa.png" alt="Visa" fill className="object-contain opacity-60" />
+            </div>
+            <div className="relative h-5 w-8">
+              <Image src="https://img.icons8.com/color/24/mastercard.png" alt="Mastercard" fill className="object-contain opacity-60" />
+            </div>
               <span className="text-xs text-[#8B9BAD]">Secure Payments</span>
             </div>
           </div>

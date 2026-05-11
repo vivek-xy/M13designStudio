@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { ShoppingCart, Heart, Search, User, Menu, X, ChevronDown, Phone, Mail } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import CartDrawer from './CartDrawer';
@@ -20,8 +21,6 @@ const NAV_LINKS = [
   { label: 'Contact', href: '/contact' },
 ];
 
-import { usePathname } from 'next/navigation';
-
 export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -33,25 +32,23 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   if (pathname?.startsWith('/admin')) return null;
-
   return (
     <>
-      {/* Top bar */}
-      <div className="bg-[#0A66FF] text-white text-sm py-2 px-4 text-center">
-        <span>🎨 Free shipping on orders above ₹1999 | Use code <strong>WELCOME10</strong> for 10% off</span>
-      </div>
-
-      {/* Main Navbar */}
-      <nav className={`sticky-nav ${scrolled ? 'scrolled' : 'bg-white'} border-b border-[#E5EBF4]`}>
-        <div className="container">
-          <div className="flex items-center justify-between h-16 gap-6">
+      {/* Main Navbar Wrapper */}
+      <div className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-500 px-4 pt-4 ${scrolled ? 'translate-y-0' : 'translate-y-0'}`}>
+        <nav className={`container max-w-7xl mx-auto rounded-2xl transition-all duration-500 ${scrolled ? 'bg-white shadow-xl py-2' : 'bg-white/80 backdrop-blur-md py-4 border border-white/50'}`}>
+        <div className="px-4 md:px-6">
+          <div className="flex items-center justify-between gap-6">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 font-bold text-xl shrink-0">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#0A66FF] to-[#4D8FFF] flex items-center justify-center text-white font-black text-sm">M13</div>
@@ -126,10 +123,10 @@ export default function Navbar() {
 
               <Link
                 href={mounted && user ? '/account' : '/login'}
-                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0A66FF] text-white text-sm font-medium hover:bg-[#0050CC] transition-all"
+                className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0F172A] text-white text-sm font-semibold hover:bg-[#0A66FF] transition-all shadow-md hover:shadow-lg active:scale-95"
               >
                 <User size={15} />
-                <span>{mounted && user ? user.name.split(' ')[0] : 'Login'}</span>
+                <span>{mounted && user ? user.name.split(' ')[0] : 'Sign In'}</span>
               </Link>
 
               <button
@@ -143,6 +140,8 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+    </div>
+    <div className="h-24 md:h-32" /> {/* Spacer */}
 
       {/* Mobile Menu */}
       <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`}>
@@ -180,7 +179,13 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-      {mobileOpen && <div className="fixed inset-0 bg-black/30 z-[998]" onClick={() => setMobileOpen(false)} />}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-[998]"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       <CartDrawer />
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />

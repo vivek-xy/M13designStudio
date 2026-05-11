@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, ShoppingBag, Users, DollarSign, Package, Eye, Star, ArrowRight, MoreHorizontal } from 'lucide-react';
+import { TrendingUp, TrendingDown, ShoppingBag, Users, DollarSign, Package, Star, ArrowRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PRODUCTS } from '@/lib/data';
 
 const REVENUE_DATA = [
@@ -47,8 +48,11 @@ export default function AdminDashboard() {
   const [soldCounts, setSoldCounts] = useState<number[]>([]);
 
   useEffect(() => {
-    setMounted(true);
-    setSoldCounts(PRODUCTS.filter(p => p.isBestSeller).slice(0, 4).map(() => Math.floor(Math.random() * 50 + 20)));
+    const timer = setTimeout(() => {
+      setMounted(true);
+      setSoldCounts(PRODUCTS.filter(p => p.isBestSeller).slice(0, 4).map(() => Math.floor(Math.random() * 50 + 20)));
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return <div className="p-6 text-[#5A6472]">Loading Dashboard...</div>;
@@ -97,7 +101,7 @@ export default function AdminDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#F0F4F8" />
               <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#8B9BAD' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 12, fill: '#8B9BAD' }} axisLine={false} tickLine={false} tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} />
-              <Tooltip formatter={(v: number) => [`₹${v.toLocaleString()}`, 'Revenue']} contentStyle={{ borderRadius: 12, border: '1px solid #E5EBF4', fontSize: 13 }} />
+              <Tooltip formatter={(v: any) => [`₹${v?.toLocaleString()}`, 'Revenue']} contentStyle={{ borderRadius: 12, border: '1px solid #E5EBF4', fontSize: 13 }} />
               <Area type="monotone" dataKey="revenue" stroke="#0A66FF" strokeWidth={2.5} fill="url(#revGrad)" dot={{ fill: '#0A66FF', r: 4 }} />
             </AreaChart>
           </ResponsiveContainer>
@@ -112,7 +116,7 @@ export default function AdminDashboard() {
               <Pie data={CAT_DATA} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value">
                 {CAT_DATA.map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
               </Pie>
-              <Tooltip formatter={(v: number) => [`${v}%`, '']} contentStyle={{ borderRadius: 12, border: '1px solid #E5EBF4', fontSize: 12 }} />
+              <Tooltip formatter={(v: any) => [`${v}%`, '']} contentStyle={{ borderRadius: 12, border: '1px solid #E5EBF4', fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
           <div className="flex flex-col gap-1.5 mt-2">
@@ -139,7 +143,7 @@ export default function AdminDashboard() {
             <CartesianGrid strokeDasharray="3 3" stroke="#F0F4F8" vertical={false} />
             <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#8B9BAD' }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 12, fill: '#8B9BAD' }} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #E5EBF4', fontSize: 13 }} />
+            <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #E5EBF4', fontSize: 13 }} formatter={(v: any) => [v, 'Orders']} />
             <Bar dataKey="orders" fill="#0A66FF" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
@@ -178,7 +182,9 @@ export default function AdminDashboard() {
             {PRODUCTS.filter(p => p.isBestSeller).slice(0, 4).map((p, i) => (
               <div key={p.id} className="flex items-center gap-3">
                 <span className="w-6 h-6 rounded-full bg-[#EEF4FF] text-[#0A66FF] font-bold text-xs flex items-center justify-center shrink-0">{i + 1}</span>
-                <img src={p.images[0]} alt={p.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0">
+                  <Image src={p.images[0]} alt={p.name} fill className="object-cover" />
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold truncate">{p.name}</p>
                   <div className="flex items-center gap-1">
